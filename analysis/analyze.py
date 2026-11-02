@@ -14,6 +14,10 @@ then measures:
      against the two-polynomial Bateman-Horn constant
   6. calibration of the density shading below 1 px per cell
   7. the Euler line at centre number 41
+  8. ratio sweep: coincidence lift as a function of the ratio r in [1, 4],
+     and which small primes carry the resonances at fractions p/q
+  9. Checker weave at 1 px band: a layer at exactly 1 px per cell with an
+     odd slot index and an even layer count can show no odd number at all
 
 Run:  python analysis/analyze.py      (about a minute, ~1 GB RAM)
 Writes analysis/results.json and analysis/*.png
@@ -308,6 +312,63 @@ ax.set_xlabel("row y"); ax.set_ylabel(f"primes in {len(seg_cone)} cells")
 ax.set_title("Why rows streak: same-length segments of each row")
 ax.legend(frameon=False, loc="upper right")
 fig.tight_layout(); fig.savefig(os.path.join(HERE, "row_streaks.png"), dpi=140)
+
+
+# ---------------------------------------------------------------- 8. ratio sweep
+P8 = 500
+q8 = np.arange(-P8, P8+1); X8, Y8 = np.meshgrid(q8, q8)
+def cells_n(z):
+    return idx(np.floor(X8/z + 0.5).astype(np.int64), np.floor(Y8/z + 0.5).astype(np.int64))
+nA8 = cells_n(1.0); pA8 = isprime(nA8)
+def lift(a, b): return float((a & b).mean()/(a.mean()*b.mean()))
+sweep_r = np.round(np.arange(1.01, 4.0001, 0.01), 3)
+sweep = []
+for r in sweep_r:
+    pB8 = isprime(cells_n(float(r)))
+    sweep.append(lift(pA8, pB8))
+sweep = np.array(sweep)
+from fractions import Fraction
+def near_simple(r, qmax=12, tol=0.006):
+    f = Fraction(float(r)).limit_denominator(qmax)
+    return abs(float(f) - r) < tol and f.denominator <= qmax
+far = np.array([not near_simple(r, 6) for r in sweep_r])
+exact = []
+for name, r in [("3/2", 3/2), ("5/3", 5/3), ("2", 2.0), ("5/2", 5/2), ("7/3", 7/3), ("3", 3.0),
+                ("13/4", 13/4), ("7/2", 7/2), ("11/3", 11/3), ("11/5", 11/5)]:
+    nB8 = cells_n(r)
+    row = dict(ratio=name, lift=round(lift(pA8, isprime(nB8)), 3))
+    for M, lab in [(2, "up_to_2"), (6, "up_to_3"), (30, "up_to_5"), (210, "up_to_7"), (2310, "up_to_11")]:
+        row[lab] = round(lift(np.gcd(nA8, M) == 1, np.gcd(nB8, M) == 1), 3)
+    exact.append(row)
+R["ratio_sweep"] = {"pixels": f"{2*P8+1}x{2*P8+1}", "step": 0.01,
+                    "lift_away_from_fractions_q_le_6": {"mean": round(float(sweep[far].mean()), 3),
+                                                       "sd": round(float(sweep[far].std()), 3)},
+                    "largest_deviations": [dict(r=float(sweep_r[i]), lift=round(float(sweep[i]), 3))
+                                           for i in np.argsort(-np.abs(sweep - 1))[:8]],
+                    "exact_fractions": exact}
+print("8. sweep:", json.dumps(R["ratio_sweep"]))
+
+# ---------------------------------------------------------------- 9. Checker, 1 px band: dead slots
+# slot = (dx + dy) mod L; a layer at z = 1 reads cell (dx, -dy), whose x + y has the parity of dx + dy.
+L9 = 6
+dead = {}
+for slot in range(L9):
+    m = (np.mod(X8 + Y8, L9) == slot)
+    nn = idx(X8[m], -Y8[m])
+    dead[slot] = dict(odd_numbers=int((nn % 2 == 1).sum()), primes=int(isprime(nn).sum()))
+R["checker_1px"] = {"layers": L9, "layer_cell_px": 1, "by_slot": dead}
+print("9. checker:", json.dumps(dead))
+
+# ---------------------------------------------------------------- sweep figure
+fig, ax = plt.subplots(figsize=(7.2, 3.6))
+ax.axhline(1, color="#58635e", lw=0.6)
+ax.plot(sweep_r, sweep, color="#1f3fae", lw=0.9)
+for name, r in [("3/2", 1.5), ("5/3", 5/3), ("2", 2), ("5/2", 2.5), ("3", 3), ("7/2", 3.5), ("11/3", 11/3)]:
+    i = int(np.argmin(np.abs(sweep_r - r))); ax.annotate(name, (sweep_r[i], sweep[i]), textcoords="offset points", xytext=(0, 6 if sweep[i] > 1 else -12), ha="center", fontsize=8)
+ax.set_xlabel("ratio r between layer B and layer A (A at 1 px per cell)")
+ax.set_ylabel("coincidence lift")
+ax.set_title("Shared primes between two layers, relative to independence")
+fig.tight_layout(); fig.savefig(os.path.join(HERE, "ratio_sweep.png"), dpi=140)
 
 R["runtime_s"] = round(time.time() - t_start, 1)
 with open(os.path.join(HERE, "results.json"), "w") as fh:

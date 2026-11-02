@@ -6,9 +6,11 @@ Several copies of Ulam's prime spiral, each drawn at a different zoom level, all
 
 One self-contained HTML file (`index.html`). No libraries, no build step. Open it in a browser.
 
-| Rows, 4 layers, ratio ×1.64 | Square rings, 4 layers, ratio ×2.60 |
-|---|---|
-| ![Rows weave](screenshot.jpg) | ![Square rings weave](screenshot_rings.jpg) |
+| Checker, 1 px band, 6 layers, ratio ×3.79 | Square rings, 4 layers, ratio ×2.60 | Round rings, 6 layers, ratio ×3.46 |
+|---|---|---|
+| ![Checker weave at 1 px band](screenshot.jpg) | ![Square rings weave](screenshot_rings.jpg) | ![Round rings weave](screenshot_round.jpg) |
+
+These screenshots are taken before the layer cap was raised, so in the first one the last three layers all read ×512 (see [Reading the screenshots](#reading-the-screenshots)).
 
 The [Analysis](#analysis) section below measures what the picture is made of: every straight line of the spiral is a quadratic polynomial, its brightness is predicted by the Hardy–Littlewood constant to within a few percent, and the horizontal streaks come from rows that are themselves quadratics.
 
@@ -76,6 +78,7 @@ The prime number theorem says primes thin out like `1 / ln n`, so multiplying by
 ## Limits
 
 - Primes come from a sieve of Eratosthenes that grows as needed, capped at 2²⁵ = 33,554,432. Integers above that are not sieved and draw blank; the status line says when that happens.
+- A layer's cell size is capped at 65,536 px. A layer far larger than the canvas shows only the centre cell (n = 1, not prime) and its neighbours, so it is mostly blank.
 - Rendering is plain JavaScript into an `ImageData` buffer on the CPU. The canvas is at most 820 × 820 pixels. Far-zoomed-out views with many layers take longer per frame because each pixel sums over a block of integers.
 
 ## Spiral indexing
@@ -95,7 +98,7 @@ Then `n = index + start − 1` when the centre number is changed.
 
 ## Analysis
 
-`analysis/analyze.py` reimplements the page's spiral indexing and its exact pixel-to-cell sampling in numpy, sieves to 1.2 × 10⁸, and measures the system. It runs in about 12 seconds and writes `analysis/results.json` plus the two figures below. Every number in this section comes from that file.
+`analysis/analyze.py` reimplements the page's spiral indexing and its exact pixel-to-cell sampling in numpy, sieves to 1.2 × 10⁸, and measures the system. It runs in under 30 seconds and writes `analysis/results.json` plus the figures below. Every number in this section comes from that file.
 
 ```
 python analysis/analyze.py
@@ -222,7 +225,7 @@ Coincide lights a pixel only where both layers have a prime. With layer A at 1 p
 - Every deviation larger than 1.5 % is explained by divisibility by 2, 3 and 5 alone.
 - **Ratio 3 lifts by 12 %**, mostly through parity. A fine cell at x = 3X has x + y ≡ X + Y (mod 2), so both layers sit on the same checkerboard colour.
 - **Ratio 2 suppresses by 13 %**. Parity is neutral here, because x = 2X makes x + y even whatever the coarse cell is. The suppression comes from residues mod 3 and 5.
-- Irrational ratios (φ, e) give lift ≈ 1. That is the "nothing aligns" case: the moiré you see at these ratios is geometry, not arithmetic.
+- φ and e give lift ≈ 1. Their moiré is geometry, not arithmetic. This is measured on one window, not proved, and it is closeness to a simple fraction that matters rather than irrationality as such: r = 1.67, which is not exactly 5/3, still gives 1.11. Section 9 sweeps the whole range.
 
 ### 6. Shared primes on the main diagonals
 
@@ -269,21 +272,79 @@ A pixel samples every cell it touches, so neighbouring pixels share one edge row
 
 With centre number 41, the line x − y = 0 through the centre carries 40 consecutive primes. These are n² + n + 41 for n = 0…39, split between the two rays. Within 60 cells of the centre, 85 % of that line is prime. The next best line has a run of 8.
 
+### 9. Ratio sweep: where the resonances are
+
+Lift of layer B over layer A (A at 1 px per cell, 1001 × 1001 pixels) for every ratio from 1.01 to 4.00 in steps of 0.01:
+
+![Ratio sweep](analysis/ratio_sweep.png)
+
+Away from fractions with denominator up to 6, the lift averages 1.010 with standard deviation 0.019, which is the noise floor of this window. The spike at r = 1.01 is trivial: the two layers are almost the same picture.
+
+At exact fractions, the lift is split by which small primes carry it. Each column below recomputes the lift for "coprime to every prime up to p" instead of "prime":
+
+| ratio | lift (primes) | up to 2 | up to 3 | up to 5 | up to 7 | up to 11 |
+|---|---|---|---|---|---|---|
+| 5/3 | **1.206** | 1.040 | 1.063 | **1.173** | 1.201 | 1.201 |
+| 3 | 1.122 | **1.112** | 1.167 | 1.136 | 1.105 | 1.109 |
+| 11/3 | 1.095 | 1.008 | 1.013 | 1.017 | 1.015 | **1.090** |
+| 11/5 | 1.073 | 1.008 | 1.000 | 1.010 | 1.008 | **1.043** |
+| 3/2 | 1.072 | 1.000 | 1.049 | 1.058 | 1.053 | 1.049 |
+| 5/2 | 1.052 | 1.000 | 1.000 | 1.032 | 1.035 | 1.035 |
+| 7/3 | 1.001 | 1.020 | 1.029 | 1.029 | 1.003 | 1.002 |
+| 13/4 | 1.001 | 1.000 | 1.018 | 1.018 | 1.015 | 1.013 |
+| 7/2 | 0.975 | 1.000 | 0.985 | 0.987 | **0.956** | 0.956 |
+| 2 | **0.867** | 1.000 | **0.875** | 0.884 | 0.878 | 0.869 |
+
+The resonances do sit at fractions p/q, but their size is not ordered by how small the denominator is. It is set by which primes divide p and q:
+
+- 5/3 is the strongest effect in the range, larger than 3/2 or 3, and the jump happens when 5 enters.
+- 11/3 and 11/5 resonate through 11 alone: the columns are flat until 11.
+- 7/2 dips through 7. 7/3 and 13/4 show nothing.
+- The region between the dip at 2 and the peak at 3 is not where the structure concentrates.
+
+Why a prime dividing the numerator matters: at r = p/q, a fine cell at coordinates (p·t, p·u) and a coarse cell at (q·t, q·u) fall on the same pixel. Along a ray, n = 4s² + Bs + C, so at s = p·t the fine layer's value is ≡ C (mod ℓ) for every prime ℓ dividing p. Its divisibility by ℓ is fixed by the ray and no longer varies along it, and that couples the two layers' chances of avoiding ℓ. This is an explanation of the mechanism, not a computed prediction of the lift values.
+
+### 10. Checker at a 1 px band: hatching, and dead slots
+
+With Checker and a 1 px band, pixel (x, y) shows layer (dx + dy) mod L, where dx, dy are measured from the centre. Each layer therefore owns every L-th 45° line of pixels, and the weave becomes interleaved hatching with an L-pixel period (first screenshot). The hatching runs at 45°, the same direction as the prime diagonals.
+
+That hatching meets the parity law. A layer at exactly 1 px per cell reads the cell (dx, −dy), whose x + y has the same parity as dx + dy. With an even number of layers, the slot index fixes that parity, so:
+
+- a layer at 1 px per cell in an **even** slot sees only odd numbers;
+- in an **odd** slot it sees only even numbers, so it can never show a prime except 2.
+
+Measured with 6 layers over 1001 × 1001 pixels:
+
+| slot | odd numbers seen | primes seen |
+|---|---|---|
+| 0, 2, 4 | 167,000 each | 26,099 – 26,333 |
+| 1 | 0 | 1 (the number 2) |
+| 3, 5 | 0 | 0 |
+
+Slots count from 0 among the active layers, so slot 1 is the second chip. To see it on the page: 6 layers, Checker, 1 px band, ratio 2, and base cell size 0.5 (4.0 cells / px). The second layer then sits at exactly 1 px per cell, and its hatch lines go blank apart from the single cell holding 2. Set an odd number of layers and the effect vanishes, because an odd L no longer fixes the parity of a slot.
+
+### Reading the screenshots
+
+- **Round rings (third screenshot).** The coarse layers are 59.5, 205.7 and 512 px per cell, so a single cell is about as wide as a ring band or wider. Those layers show only the first handful of integers. Their lit cells are the small primes 2, 3, 5, 7, 11, …, cut into arcs and triangles by the circular mask.
+- **Staircases.** In the middle layers, primes appear as blocks that touch only at corners and chain diagonally. That is the parity law made visible: primes sit only on cells with x + y even, and two such cells can only meet at a corner.
+- **The ×512 triplet (first screenshot).** At base 10.76 and ratio 3.789, layers 4–6 would be 585, 2,217 and 8,400 px per cell. They were all clamped to the old cap of 512 and drew the same spiral, so three of every six hatch lines showed the same cell. That is why the dark hatched regions look so dense. The cap is now 65,536, so those layers keep scaling (and become mostly blank, since they show only the cells next to the centre).
+
 ### Ledger
 
 **Verified exactly**
-- the parity law
+- the parity law, and the dead odd slots of the 1 px Checker weave that follow from it
 - that every ray beyond the central cross is an exact quadratic
 - that reducible and even rays hold no primes in range
 
 **Measured, within the computed range**
 - Hardy–Littlewood and Bateman–Horn agreement (both are conjectures; these are consistency checks, not proofs)
 - the row-streak variance
-- the layer lifts
+- the layer lifts and the ratio sweep
 - the shading calibration
 
 **Not established here**
 - the Montgomery–Soundararajan comparison, beyond one number
+- a quantitative prediction of the resonance sizes in section 9 (only the mechanism is described)
 - anything new in number theory: the arithmetic of Ulam diagonals is classical (Hardy & Littlewood 1923, Bateman & Horn 1962)
 
 What is specific to this tool is how its weaves select from that arithmetic:

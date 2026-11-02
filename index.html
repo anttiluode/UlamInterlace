@@ -219,7 +219,7 @@ footer { color: var(--muted); font-size: 12.5px; max-width: 820px; }
 
   function layerList() {
     const base = Math.pow(2, S.log2z), out = [];
-    for (let i = 0; i < S.count; i++) out.push({ i, z: Math.min(512, base * Math.pow(S.ratio, i)) });
+    for (let i = 0; i < S.count; i++) out.push({ i, z: Math.min(65536, base * Math.pow(S.ratio, i)) });
     return out;
   }
   const anchor = () => [Math.round(cv.width / 2 + S.ox), Math.round(cv.height / 2 + S.oy)];
