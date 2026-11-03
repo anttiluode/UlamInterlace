@@ -323,6 +323,170 @@ Measured with 6 layers over 1001 × 1001 pixels:
 
 Slots count from 0 among the active layers, so slot 1 is the second chip. To see it on the page: 6 layers, Checker, 1 px band, ratio 2, and base cell size 0.5 (4.0 cells / px). The second layer then sits at exactly 1 px per cell, and its hatch lines go blank apart from the single cell holding 2. Set an odd number of layers and the effect vanishes, because an odd L no longer fixes the parity of a slot.
 
+### 11. Exact parity resonance for rational scale ratios
+
+The spike at ratio 3 is not merely a visual moire. For the **binary, one-pixel-per-cell** coincidence experiment (centre number 1), the parity contribution can be calculated exactly.
+
+Let the ratio of coarse to fine cell size be a reduced rational number \(r=P/Q\), with positive coprime integers \(P,Q\). With the fine layer at 1 px/cell, the coarse layer reads
+
+$
+T_r(x)=\left\lfloor\frac{Qx}{P}+\frac12\right\rfloor.
+$
+
+The spiral indexing obeys \(U(x,y)\equiv x+y+1\pmod 2\). Counting two-dimensional parity matches over their complete repeating residue pattern gives the **exact large-window odd-position lift**
+
+$
+\boxed{
+L_2(P/Q)=
+\begin{cases}
+1+1/P^2,&P,Q\text{ both odd},\\
+1,&\text{otherwise}.
+\end{cases}}
+$
+
+This is a statement about odd-number positions, **not** about simultaneous primes. The \(1/P^2\) comes from the two independent spatial coordinates: the one-dimensional parity correlation has magnitude \(1/P\), which is squared in the two-dimensional count.
+
+| Ratio | Exact parity lift | Finite-window parity lift measured in section 9 |
+|---|---:|---:|
+| 3 | 1.11111 | 1.112 |
+| 5/3 | 1.04000 | 1.040 |
+| 7/3 | 1.02041 | 1.020 |
+| 11/3 | 1.00826 | 1.008 |
+| 2 | 1.00000 | 1.000 |
+| 3/2 | 1.00000 | 1.000 |
+
+The exact law was separately checked by enumerating the full \(2P\)-period coordinate pattern. It explains a component of the prime-coincidence peaks without ever calling a primality test. Note that the numbers in the original ratio sweep are **prime** lifts, and need not equal these parity lifts.
+
+### 12. A directional surprise: rational resonance is anisotropic
+
+The spiral has a winding direction. The four cardinal wedges (away from their diagonal boundaries) have different exact indexing polynomials, with the usual mathematical coordinates \(y\) pointing upward:
+
+$
+\begin{aligned}
+E:\quad U(x,y)&=4x^2-3x+y+1,\\
+W:\quad U(x,y)&=4x^2-x-y+1,\\
+N:\quad U(x,y)&=4y^2-y-x+1,\\
+S:\quad U(x,y)&=4y^2-3y+x+1.
+\end{aligned}
+$
+
+The E and S wedges share an algebraic pattern, as do W and N. This suggests examining coincidence by wedge instead of averaging over the entire plate.
+
+The following were recomputed independently with the repository's spiral formula, nearest-neighbour sampling \(\lfloor x/r+1/2\rfloor\), exact primality and centre number 1, over \([-500,500]^2\). Each entry is \(P(A\land B)/[P(A)P(B)]\) **within that wedge**; E means \(x>|y|\), W means \(-x>|y|\), N means \(y>|x|\), and S means \(-y>|x|\).
+
+| Scale | E wedge | W wedge | N wedge | S wedge | Whole square |
+|---|---:|---:|---:|---:|---:|
+| 5/3 | **1.385** | 1.029 | 1.055 | **1.374** | 1.206 |
+| 3 | **0.934** | **1.301** | **1.285** | 0.953 | 1.122 |
+| 2 | 0.877 | 0.856 | 0.871 | 0.855 | 0.867 |
+
+At 5/3, the enhancements on E and S are much stronger than the global average. At 3, E/S are slightly suppressed while W/N are strongly enhanced. The global lift hides this directional structure.
+
+These are **finite-window measurements**, not proved asymptotic constants. Their asymmetry is compatible with the different wedge polynomials and their small-divisor residues. This is more discriminating than comparing only one global coincidence number.
+
+### 13. Arithmetic offset acts like a phase control
+
+Keeping the geometry fixed and changing only the **centre number** shifts every spiral integer by a constant, altering its residues modulo small primes. This can reverse a scale resonance.
+
+Independently recomputed whole-square lifts on the same \(1001\times1001\) pixel window:
+
+| Centre number | Ratio 5/3 | Ratio 3 | Ratio 2 |
+|---|---:|---:|---:|
+| 1 | 1.206 | 1.122 | 0.867 |
+| 2 | 1.135 | 1.326 | 1.001 |
+| 3 | 0.909 | 0.829 | 1.129 |
+| 4 | **0.803** | 1.151 | 1.056 |
+| 41 | 1.122 | 1.328 | 0.993 |
+
+At 5/3, moving from centre 1 to centre 4 changes a 20.6% enhancement into a 19.7% suppression, without changing the spatial weave. This is strong evidence for **arithmetic congruence selection**, not simply optical interference. The offset is an *arithmetic phase* (modular translation), not an optical or complex-valued phase.
+
+### 14. Predicting scale resonances with a finite modular sieve
+
+The strongest next step is to predict coincidence from *local divisibility* instead of prime tests.
+
+For a reduced ratio \(P/Q\), write each fine coordinate as \(x=Pa+u\), \(0\leq u<P\). Then
+
+$
+T_r(x)=Qa+\left\lfloor\frac{Qu}{P}+\frac12\right\rfloor.
+$
+
+The same holds independently for \(y=Pb+v\). Fix residues \(u,v\), a cardinal wedge and an offset \(c\). For each small prime \(\ell\), enumerate \(a,b\pmod\ell\) and count the cases where neither the fine nor coarse wedge polynomial plus \(c-1\) is divisible by \(\ell\).
+
+By the Chinese remainder theorem, those per-prime probabilities multiply **conditional on the shared residues \(u,v\)**. Average over \(u,v\) and the four wedges to obtain the large-region lift of a finite-sieve surrogate (numbers coprime to \(2\cdot3\cdot5\cdot7\cdot11=2310\)). This is an exact finite-residue calculation for that surrogate, not an exact prime-number theorem.
+
+Independent computations with this five-prime model:
+
+| Ratio | Modular-model lift | Actual prime lift (1001² window) |
+|---|---:|---:|
+| 5/3 | **1.199** | **1.206** |
+| 3 | 1.108 | 1.122 |
+| 2 | 0.869 | 0.867 |
+| 3/2 | 1.050 | 1.072 |
+| 11/3 | 1.089 | 1.095 |
+| 7/3 | 1.002 | 1.001 |
+
+The model even reproduces the centre-number reversal at ratio 5/3: it predicts **1.199** with centre 1 and **0.799** with centre 4, against actual prime lifts of **1.206** and **0.803**.
+
+The model uses an asymptotic, equally weighted four-wedge density, while the prime counts above use finite square windows. Their agreement is strong evidence for the proposed *small-divisor mechanism*, but the residuals mix higher-prime effects with finite-size and boundary effects. A precise residual study must compare **matched-window** baselines.
+
+### 15. Resonance width and finite observation scale
+
+Exact and nearly rational ratios behave differently as the spatial window expands. A small change \(\delta r\) changes the coarse sampled coordinate at large \(|x|\) by roughly
+
+$
+|\Delta T_r(x)|\simeq \frac{|x|}{r^2}|\delta r|.
+$
+
+Thus the alignment scale should narrow roughly like \(r^2/R\) for window radius \(R\). This is a **geometric coherence estimate**, not a theorem for the precise width of the prime-lift peak.
+
+Measured whole-square prime lifts, centre number 1:
+
+| Half-width \(R\) | Exact 5/3 | Decimal 1.67 |
+|---|---:|---:|
+| 100 px | 1.224 | 1.197 |
+| 500 px | 1.206 | 1.110 |
+| 800 px | 1.207 | 1.054 |
+
+The exact rational alignment remains; the nearby decimal loses lift as the observation area grows. The page's ratio slider has step 0.001 and **cannot set 5/3 exactly**, so a numerator/denominator input is needed for serious high-resolution ratio scans.
+
+### 16. Quadratic characters, Euler's line, and -163
+
+The bright ray \(4s^2-2s+41\) is a subsequence of Euler's polynomial \(n^2-n+41\), taking \(n=2s\). The full Euler polynomial has discriminant \(-163\); the ray polynomial's discriminant is \(-652=4(-163)\).
+
+For an odd prime \(\ell\) not dividing the leading coefficient, the number of polynomial roots modulo \(\ell\) is
+
+$
+\omega_f(\ell)=1+\left(\frac{\Delta}{\ell}\right),
+$
+
+where the parenthesized term is the Legendre symbol. Consequently, the odd-prime Bateman-Horn factor is \(1-\chi_\Delta(\ell)/(\ell-1)\). The brightness of a quadratic ray is tied to quadratic residue characters and, more deeply, Dirichlet \(L\)-functions.
+
+The appearance of \(-163\) connects Euler's classic prime-rich polynomial with the imaginary quadratic field \(\mathbb Q(\sqrt{-163})\), whose ring of integers has class number one. This is a **known classical connection**, not a new claim about the Riemann hypothesis or an explanation of all interlace resonances.
+
+For background on the polynomial local factors, see [Bateman-Horn at the Encyclopedia of Mathematics](https://encyclopediaofmath.org/wiki/Bateman-Horn_conjecture) and [the AMS exposition](https://doi.org/10.1090/noti3046). For the Euler/Heegner-number connection, see [this discussion of the Ulam spiral and discriminant -163](https://www.mdpi.com/2673-9321/6/2/22).
+
+### 17. What would count as a new result?
+
+The natural research object is a **scale-and-offset correlation surface**. Let \(U(x,y)\) be spiral indexing and \(\mathbf 1_{\mathbb P}\) the prime indicator. For each finite observation window \(W\), examine
+
+$
+C_W(r,c)=\operatorname{Corr}_{(x,y)\in W}
+\left[\mathbf 1_{\mathbb P}(U(x,y)+c),\
+\mathbf 1_{\mathbb P}\big(U(T_r(x),T_r(y))+c\big)\right].
+$
+
+Here \(c=\text{centre number}-1\), and the correlation coefficient is distinct from the *lift* reported in the tables above.
+
+Research plan:
+
+1. Add exact rational \(P/Q\) controls; render the full correlation surface over ratio, offset and quadrant.
+2. Compare prime lifts with finite-sieve baselines for primes up to 2, 3, 5, 7, 11 and beyond, **using the same sampling window and centre number**.
+3. Inspect the residual after the modular prediction, across several radii and held-out offsets, with shuffled and residue-preserving controls.
+4. Separate integer-cell Coincide from subpixel-density blending; when \(z<1\), multiplication of grey density values is **not** the binary event "both sampled integers prime".
+5. Test predictions on new ratios and larger numerical ranges, preferably with segmented sieving instead of silently extending beyond the HTML sieve cap.
+
+A surviving, reproducible residual would be interesting; its significance would need statistical controls and comparison with existing sieve and Bateman-Horn theory. The current work establishes **exact geometric/parity identities and finite numerical modular resonances**, not a new prime-number theorem.
+
 ### Reading the screenshots
 
 - **Round rings (third screenshot).** The coarse layers are 59.5, 205.7 and 512 px per cell, so a single cell is about as wide as a ring band or wider. Those layers show only the first handful of integers. Their lit cells are the small primes 2, 3, 5, 7, 11, …, cut into arcs and triangles by the circular mask.
@@ -333,6 +497,7 @@ Slots count from 0 among the active layers, so slot 1 is the second chip. To see
 
 **Verified exactly**
 - the parity law, and the dead odd slots of the 1 px Checker weave that follow from it
+- the rational-ratio parity lift law in section 11 (for the specified nearest-neighbour sampling, in the full-period limit)
 - that every ray beyond the central cross is an exact quadratic
 - that reducible and even rays hold no primes in range
 
@@ -340,11 +505,12 @@ Slots count from 0 among the active layers, so slot 1 is the second chip. To see
 - Hardy–Littlewood and Bateman–Horn agreement (both are conjectures; these are consistency checks, not proofs)
 - the row-streak variance
 - the layer lifts and the ratio sweep
+- the directional and centre-offset lifts, modular-surrogate comparison, and finite-window resonance narrowing (sections 12-15)
 - the shading calibration
 
 **Not established here**
 - the Montgomery–Soundararajan comparison, beyond one number
-- a quantitative prediction of the resonance sizes in section 9 (only the mechanism is described)
+- an exact prediction for the **prime** resonance sizes; section 14 gives an exact prediction for a finite modular-sieve surrogate, not for primes
 - anything new in number theory: the arithmetic of Ulam diagonals is classical (Hardy & Littlewood 1923, Bateman & Horn 1962)
 
 What is specific to this tool is how its weaves select from that arithmetic:
