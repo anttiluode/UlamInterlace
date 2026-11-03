@@ -1,0 +1,22 @@
+name: Check prime centre sweep
+on:
+  push:
+    paths:
+      - index.html
+      - tests/prime-centre-sweep.test.cjs
+      - .github/workflows/prime-centre-sweep.yml
+  pull_request:
+    paths:
+      - index.html
+      - tests/prime-centre-sweep.test.cjs
+      - .github/workflows/prime-centre-sweep.yml
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: node --test tests/prime-centre-sweep.test.cjs
