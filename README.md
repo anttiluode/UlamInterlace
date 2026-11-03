@@ -494,6 +494,168 @@ Research plan:
 
 A surviving, reproducible residual would be interesting; its significance would need statistical controls and comparison with existing sieve and Bateman-Horn theory. The current work establishes **exact geometric/parity identities and finite numerical modular resonances**, not a new prime-number theorem.
 
+### 18. Video observations (08:20–22:01): disentangling the mechanisms
+
+**Recording:** [Ulam Interlace on YouTube](https://www.youtube.com/watch?v=pyTtm_awohQ), [starting at 08:20](https://www.youtube.com/watch?v=pyTtm_awohQ&t=500s). The original uploaded video segment was also inspected. The YouTube encode has additional compression: very fine radial texture and hatching may show codec artefacts. The screenshot at the beginning of this README is from **08:36**.
+
+The footage shows several *different* mechanisms producing superficially similar emergent patterns. The time ranges below refer to **the original YouTube timestamps**, not elapsed time within the 08:20 segment.
+
+| Original timestamp | Feature | Mechanism supported by the HTML source |
+|---|---|---|
+| [08:23–09:55](https://www.youtube.com/watch?v=pyTtm_awohQ&t=503s) | Nested coloured blocks / carpet | Different-size prime cells, 3×3 or other subdivisions, parity, colour compositing |
+| [11:20–12:08](https://www.youtube.com/watch?v=pyTtm_awohQ&t=680s) | Wide Columns-mode barcodes | Vertical slit selection across differently sized prime cells |
+| [12:11–13:38](https://www.youtube.com/watch?v=pyTtm_awohQ&t=731s) | Round-ring keystones and Square-ring comparison | Circular masks intersecting square Ulam shells |
+| [14:04–15:33](https://www.youtube.com/watch?v=pyTtm_awohQ&t=844s) | Wide Checker mosaic | Partition mask intersecting differently scaled grids |
+| **[16:53–17:18](https://www.youtube.com/watch?v=pyTtm_awohQ&t=1013s)** | **Central white XOR square and radial streaks** | **Near-identity scale locking and Boolean parity cancellation** |
+| [17:18–19:22](https://www.youtube.com/watch?v=pyTtm_awohQ&t=1038s) | Coincide starbursts, X-shaped structures | Scale overlap; at subpixel zoom, multiplication of densities rather than binary primes |
+| [20:50–22:00](https://www.youtube.com/watch?v=pyTtm_awohQ&t=1250s) | Fine concentric hatching and apparent bullseyes | Radial selection bands intersecting Cartesian cell lattices |
+
+**Correcting an earlier description:** the striking view at approximately **17:00** is *four-layer XOR*, ratio **1.010**, base **1.00 px per cell**, centre **41**. It is not the six-layer ratio-2 XOR configuration described in an external interpretation. Around **17:25**, the Coincide view also has near-identical zoom levels; at approximately **18:40** it has six layers near ratio 1.010 (roughly 10.70–11.25 px/cell). The separate six-layer ratio-2 calculations in section 20 were done **offline**, not extracted from those video frames.
+
+### 19. A proven 35×35 white XOR core: the scale-locking law
+
+The actual XOR formula in the HTML is
+
+$
+X(v_0,\ldots,v_{L-1})=\frac{1-\prod_{j=0}^{L-1}(1-2v_j)}{2}.
+$
+
+For binary samples it is Boolean XOR. In particular, an **even number of identical binary values always cancels**, whether they represent primes or non-primes. The HTML does *not* threshold each value at 0.5 or combine a separate parity accumulator with a mass term.
+
+At the video's near-identity setting, with base cell size 1 and four layers separated by ratio 1.01, the mapped integer coordinate is
+
+$
+T_j(x)=\left\lfloor x/1.01^j+\tfrac12\right\rfloor,\qquad j=0,1,2,3.
+$
+
+For **every integer x from −17 through 17**, all four maps return **the same x**. The same holds independently for y. Thus a full central **35×35 pixel square** samples identical integers in all four layers and must render XOR value **zero**, i.e. white in light mode. It would do so even if the prime indicator were replaced by a randomized binary field.
+
+A useful *sufficient* scale-locking condition at base 1 px/cell, ratio r greater than 1 and L layers is
+
+$
+|x|\left(1-r^{-(L-1)}\right)<\tfrac12,\qquad
+|y|\left(1-r^{-(L-1)}\right)<\tfrac12.
+$
+
+It gives an approximate locking half-width
+
+$
+R_{\mathrm{lock}}\simeq\frac{1}{2(1-r^{-(L-1)})}.
+$
+
+For r=1.01 and L=4 this is about **17 pixels**, matching the exact integer-coordinate lock. Beyond that distance, layer sampling begins to disagree as cell boundaries are crossed, creating the fine radial XOR streaks. This is best viewed as a **scale-space change detector**. The crisp central square is *not* evidence of a new prime-number phenomenon.
+
+This argument assumes binary samples. When the page samples multiple integers per pixel, it uses continuous density values and the XOR polynomial is no longer literal Boolean parity.
+
+### 20. A separate six-layer Coincide test: Euler survival
+
+For binary cell samples, the L-layer Coincide operator is
+
+$
+S_L(x,y;r,c)=
+\prod_{j=0}^{L-1}
+\mathbf{1}_{\mathbb P}\left[
+U\left(
+\left\lfloor x/r^j+\tfrac12\right\rfloor,
+\left\lfloor y/r^j+\tfrac12\right\rfloor
+\right)+c
+\right],
+$
+
+where U is the Ulam index with U(0,0)=1 and c is centre number minus one. **Each layer samples directly from the initial coordinate**. Repeatedly applying a rounded map is not generally the same operation.
+
+Independently recomputed with exact prime testing on an **821×821** pixel square, base **1 px/cell**, ratio **2**, and **six layers at 1, 2, 4, 8, 16, 32 px/cell**:
+
+| Centre number | Pixels surviving all six layers | Of these, on the line x=y |
+|---|---:|---:|
+| 1 | 5 | 0 |
+| 17 | 61 | 59 |
+| **41** | **225** | **223** |
+
+**These are counts of lit pixels, not of distinct prime numbers.** The computations above have been independently rechecked from the exact spiral indexing and sampling rules.
+
+For centre 41, the signed main diagonal is
+
+$
+U(s,s)+40=4s^2-2s+41.
+$
+
+This polynomial is prime at **all 40 consecutive integer positions −19 ≤ s ≤ 20**. It is Euler's classical prime-producing family in the form n²+n+41 with n=−2s. For any coarser scale r≥1 and any number of extra layers, nearest-neighbour sampling moves any integer s within that interval toward zero but keeps it **inside the same interval**. Thus **40 diagonal pixels are rigorously guaranteed to survive arbitrarily many coarser layers**, under the specified base-1 nearest-neighbour sampling.
+
+The other **183** diagonal survivors at ratio 2 and the **two** off-diagonal survivors are observations for that finite six-layer experiment; they are not proved to survive arbitrary depths. The guaranteed interval is a **forward-invariant prime-valued set under coordinate contraction**, not a mathematical fixed point of Euler's polynomial or a new Bateman–Horn theorem. It gives an excellent positive control for further multiscale experiments.
+
+### 21. Why Coincide bursts when the cell size goes below one pixel
+
+The visual transition around [17:29–18:14](https://www.youtube.com/watch?v=pyTtm_awohQ&t=1049s) must be interpreted together with the renderer's sampling branch.
+
+- **Single-cell footprint:** each layer returns 0 or 1 according to primality; Coincide is an exact Boolean AND.
+- **Multi-cell footprint, usually below 1 px/cell:** the HTML computes a prime fraction over the touched cells and scales it to a value between 0 and 1 with one half times the logarithm of the last enumerated index. Coincide **multiplies these fractional values**, so it no longer means that all individual sampled integers are prime.
+- Adjacent multi-cell pixel footprints also share edge cells, creating additional coherence and smoothing.
+
+The implementation's density rule is approximately
+
+$
+v=\min\left(1,\frac12\,\frac{\#\text{prime sampled cells}}{\#\text{sampled cells}}\ln n_{\mathrm{last}}\right).
+$
+
+It uses the **last enumerated index**, not the average of the sampled indices. The greyscale radial burst therefore contains sampling, density-normalization and prime-arithmetic effects simultaneously. To count true multiscale coincident primes, use direct binary samples, not this shaded Coincide output.
+
+### 22. Nested coloured blocks: a hierarchical arithmetic mosaic
+
+At an exact scale ratio of 3, an aligned coarse cell divides into a **3×3** block of fine-cell centres. From the exact parity identity U(x,y)≡x+y+1 (mod 2), a coarse odd-prime cell corresponds to **five fine positions eligible for odd primes and four necessarily even positions** (apart from the exceptional integer 2). This provides deterministic structure before testing any other divisors. Eligibility does **not** mean the five fine integers actually are prime.
+
+For **light-mode Overlay** the actual composition is multiplicative, channel by channel on white paper:
+
+$
+\frac{C_{\mathrm{out}}}{255}
+=\prod_j\left[1-v_j\left(1-\frac{C_j}{255}\right)\right].
+$
+
+It is **not** a linear subtractive sum. One ink layer cannot erase another to punch a white hole through a coloured block. The nested brown, green and cyan shapes are overlaps of prime cells with different sizes and inks, combined with fine-scale parity and density textures.
+
+The visual similarity to a Sierpinski carpet is suggestive, but a finite stack of differently zoomed copies is **not proof of an infinite fractal, a Cantor sieve or p-adic self-similarity**. Establish such a claim by testing box counts or occupied-area scaling across growing layer counts against randomized and parity-only controls.
+
+### 23. Barcodes, round-ring keystones and ghost bullseyes
+
+**Columns mode, 11:20–12:08.** The mask chooses the layer from floor(dx/band) modulo the number of active layers. If a layer's cell width is comparable to or larger than the slit width, one coarse prime block fills a long vertical segment. Finer layers appear stippled or density-shaded. This is a **spatial slit selector**, not Radon tomography: the program does not integrate line projections.
+
+**Round versus Square rings, 12:11–13:38.** Round rings select by the Euclidean distance
+
+$r_2=\sqrt{x^2+y^2},$
+
+but the Ulam spiral's shells use the Chebyshev distance
+
+$r_\infty=\max(|x|,|y|).$
+
+On a circle of radius R, the shell radius varies with angle:
+
+$
+r_\infty=R\max(|\cos\theta|,|\sin\theta|).
+$
+
+It ranges from R at the cardinal points to R/√2 at the diagonals. Near a cardinal-axis tangency, the departure of the circular boundary from a straight square-shell edge is approximately y²/(2R). A strip of thickness w can therefore appear as a broad arch with tangential span of order √(2Rw). This predicts keystone-like arcs by **geometry alone**, without invoking physical caustics.
+
+**Narrow Round rings, 20:50–22:00.** The selection mask is
+
+$
+j(x,y)=\left\lfloor\frac{\sqrt{x^2+y^2}}{B}\right\rfloor\bmod L.
+$
+
+It interleaves circular bands with several square lattices of prime-cell boundaries. The intersections create visually striking curved moiré, hatching and apparent off-centre bullseyes. These are **not demonstrated Talbot carpets or Fresnel diffraction**: no coherent wave propagation exists in the implementation. Compression in the YouTube upload may alter fine details; evaluate those on the original recording or direct renderer output.
+
+### 24. The next decisive experiment: separate geometry from arithmetic
+
+Three distinct sources can generate the apparent structure: **resampling geometry**, **divisibility/modular arithmetic**, and **correlations specific to primes**. A scientific comparison should render four synchronized views with the **same** base scale, exact ratio, active layers, centre offset, window and mask:
+
+1. **Actual primes**, with exact binary samples for Coincide and XOR research.
+2. **Matched-density randomized field**, ideally with controls also preserving broad density drift and/or spatial line structure.
+3. **Small-divisor surrogate**, e.g. integers coprime to 2·3·5·7·11 using the same sampling coordinates.
+4. **Residual observables**, such as actual-minus-model coincidence lift, per-wedge counts, autocorrelation, or radial density. A residual image is exploratory; significance requires repeated windows / offsets and appropriate uncertainty estimates.
+
+Recording the full parameter tuple (base, ratio, layer count, mask, band width, centre, observation window, binary versus density sampling) is essential. Exact rational ratios require an input beyond the current decimal-only slider.
+
+**Takeaway:** the video reveals an exact near-identity XOR locking region, demonstrable multiscale geometry, and striking prime-bearing diagonal survival. The separately calculated Euler example includes a **proved 40-pixel survival interval**; the remaining six-layer structures still require matched controls before claiming any new prime-number theory.
+
 ### Reading the screenshots
 
 - **Round rings (third screenshot).** The coarse layers are 59.5, 205.7 and 512 px per cell, so a single cell is about as wide as a ring band or wider. Those layers show only the first handful of integers. Their lit cells are the small primes 2, 3, 5, 7, 11, …, cut into arcs and triangles by the circular mask.
@@ -503,6 +665,7 @@ A surviving, reproducible residual would be interesting; its significance would 
 ### Ledger
 
 **Verified exactly**
+- the near-identity four-layer XOR locking square (section 19) and the 40-point Euler survival interval (section 20)
 - the parity law, and the dead odd slots of the 1 px Checker weave that follow from it
 - the rational-ratio parity lift law in section 11 (for the specified nearest-neighbour sampling, in the full-period limit)
 - that every ray beyond the central cross is an exact quadratic
@@ -514,8 +677,10 @@ A surviving, reproducible residual would be interesting; its significance would 
 - the layer lifts and the ratio sweep
 - the directional and centre-offset lifts, modular-surrogate comparison, and finite-window resonance narrowing (sections 12-15)
 - the shading calibration
+- the independent six-layer ratio-2 Coincide pixel counts (section 20)
 
 **Not established here**
+- that the remaining six-layer diagonal survivors persist for arbitrarily many layers, or that the carpet/ghost patterns are literal fractals or wave caustics
 - the Montgomery–Soundararajan comparison, beyond one number
 - an exact prediction for the **prime** resonance sizes; section 14 gives an exact prediction for a finite modular-sieve surrogate, not for primes
 - anything new in number theory: the arithmetic of Ulam diagonals is classical (Hardy & Littlewood 1923, Bateman & Horn 1962)
