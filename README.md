@@ -1,6 +1,11 @@
 # Ulam Interlace
 
+![pic](pic.png)
+
+(Picture above is from the video at 8:36)
 Video: https://www.youtube.com/watch?v=pyTtm_awohQ 
+
+
 
 Several copies of Ulam's prime spiral, each drawn at a different zoom level, all sharing the same centre, woven together pixel by pixel.
 
