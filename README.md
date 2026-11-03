@@ -336,20 +336,20 @@ The spike at ratio 3 is not merely a visual moire. For the **binary, one-pixel-p
 
 Let the ratio of coarse to fine cell size be a reduced rational number $r=P/Q$, with positive coprime integers $P,Q$. With the fine layer at 1 px/cell, the coarse layer reads
 
-$
+$$
 T_r(x)=\left\lfloor\frac{Qx}{P}+\frac12\right\rfloor.
-$
+$$
 
 The spiral indexing obeys $U(x,y)\equiv x+y+1\pmod 2$. Counting two-dimensional parity matches over their complete repeating residue pattern gives the **exact large-window odd-position lift**
 
-$
+$$
 \boxed{
 L_2(P/Q)=
 \begin{cases}
 1+1/P^2,&P,Q\text{ both odd},\\
 1,&\text{otherwise}.
 \end{cases}}
-$
+$$
 
 This is a statement about odd-number positions, **not** about simultaneous primes. The $1/P^2$ comes from the two independent spatial coordinates: the one-dimensional parity correlation has magnitude $1/P$, which is squared in the two-dimensional count.
 
@@ -368,14 +368,14 @@ The exact law was separately checked by enumerating the full $2P$-period coordin
 
 The spiral has a winding direction. The four cardinal wedges (away from their diagonal boundaries) have different exact indexing polynomials, with the usual mathematical coordinates $y$ pointing upward:
 
-$
+$$
 \begin{aligned}
 E:\quad U(x,y)&=4x^2-3x+y+1,\\
 W:\quad U(x,y)&=4x^2-x-y+1,\\
 N:\quad U(x,y)&=4y^2-y-x+1,\\
 S:\quad U(x,y)&=4y^2-3y+x+1.
 \end{aligned}
-$
+$$
 
 The E and S wedges share an algebraic pattern, as do W and N. This suggests examining coincidence by wedge instead of averaging over the entire plate.
 
@@ -413,9 +413,9 @@ The strongest next step is to predict coincidence from *local divisibility* inst
 
 For a reduced ratio $P/Q$, write each fine coordinate as $x=Pa+u$, $0\leq u<P$. Then
 
-$
+$$
 T_r(x)=Qa+\left\lfloor\frac{Qu}{P}+\frac12\right\rfloor.
-$
+$$
 
 The same holds independently for $y=Pb+v$. Fix residues $u,v$, a cardinal wedge and an offset $c$. For each small prime $\ell$, enumerate $a,b\pmod\ell$ and count the cases where neither the fine nor coarse wedge polynomial plus $c-1$ is divisible by $\ell$.
 
@@ -440,9 +440,9 @@ The model uses an asymptotic, equally weighted four-wedge density, while the pri
 
 Exact and nearly rational ratios behave differently as the spatial window expands. A small change $\delta r$ changes the coarse sampled coordinate at large $|x|$ by roughly
 
-$
+$$
 |\Delta T_r(x)|\simeq \frac{|x|}{r^2}|\delta r|.
-$
+$$
 
 Thus the alignment scale should narrow roughly like $r^2/R$ for window radius $R$. This is a **geometric coherence estimate**, not a theorem for the precise width of the prime-lift peak.
 
@@ -462,9 +462,9 @@ The bright ray $4s^2-2s+41$ is a subsequence of Euler's polynomial $n^2-n+41$, t
 
 For an odd prime $\ell$ not dividing the leading coefficient, the number of polynomial roots modulo $\ell$ is
 
-$
+$$
 \omega_f(\ell)=1+\left(\frac{\Delta}{\ell}\right),
-$
+$$
 
 where the parenthesized term is the Legendre symbol. Consequently, the odd-prime Bateman-Horn factor is $1-\chi_\Delta(\ell)/(\ell-1)$. The brightness of a quadratic ray is tied to quadratic residue characters and, more deeply, Dirichlet $L$-functions.
 
@@ -476,11 +476,11 @@ For background on the polynomial local factors, see [Bateman-Horn at the Encyclo
 
 The natural research object is a **scale-and-offset correlation surface**. Let $U(x,y)$ be spiral indexing and $\mathbf 1_{\mathbb P}$ the prime indicator. For each finite observation window $W$, examine
 
-$
+$$
 C_W(r,c)=\operatorname{Corr}_{(x,y)\in W}
 \left[\mathbf 1_{\mathbb P}(U(x,y)+c),
 \mathbf 1_{\mathbb P}\big(U(T_r(x),T_r(y))+c\big)\right].
-$
+$$
 
 Here $c=\text{centre number}-1$, and the correlation coefficient is distinct from the *lift* reported in the tables above.
 
@@ -516,42 +516,42 @@ The footage shows several *different* mechanisms producing superficially similar
 
 The actual XOR formula in the HTML is
 
-$
+$$
 X(v_0,\ldots,v_{L-1})=\frac{1-\prod_{j=0}^{L-1}(1-2v_j)}{2}.
-$
+$$
 
 For binary samples it is Boolean XOR. In particular, an **even number of identical binary values always cancels**, whether they represent primes or non-primes. The HTML does *not* threshold each value at 0.5 or combine a separate parity accumulator with a mass term.
 
 At the video's near-identity setting, with base cell size 1 and four layers separated by ratio 1.01, the mapped integer coordinate is
 
-$
+$$
 T_j(x)=\left\lfloor x/1.01^j+\tfrac12\right\rfloor,\qquad j=0,1,2,3.
-$
+$$
 
 For **every integer x from −17 through 17**, all four maps return **the same x**. The same holds independently for y. Thus a full central **35×35 pixel square** samples identical integers in all four layers and must render XOR value **zero**, i.e. white in light mode. It would do so even if the prime indicator were replaced by a randomized binary field.
 
 A useful *sufficient* scale-locking condition at base 1 px/cell, ratio r greater than 1 and L layers is
 
-$
+$$
 |x|\left(1-r^{-(L-1)}\right)<\tfrac12,\qquad
 |y|\left(1-r^{-(L-1)}\right)<\tfrac12.
-$
+$$
 
 It gives an approximate locking half-width
 
-$
+$$
 R_{\mathrm{lock}}\simeq\frac{1}{2(1-r^{-(L-1)})}.
-$
+$$
 
 For r=1.01 and L=4 this is about **17 pixels**, matching the exact integer-coordinate lock. Beyond that distance, layer sampling begins to disagree as cell boundaries are crossed, creating the fine radial XOR streaks. This is best viewed as a **scale-space change detector**. The crisp central square is *not* evidence of a new prime-number phenomenon.
 
-This argument assumes binary samples. When the page samples multiple integers per pixel, it uses continuous density values and the XOR polynomial is no longer literal Boolean parity.
+This argument assumes binary samples. When the page samples multiple integers per pixel, it uses continuous density values and the XOR polynomial is no longer literal Boolean parity. The 35×35 core is only the fully locked region; the **additional nine- and 49-box patterns** follow from pairwise layer cancellation, derived exactly in [section 25](#25-exact-xor-box-genealogy-2-to-6-layers-at-ratio-1010).
 
 ### 20. A separate six-layer Coincide test: Euler survival
 
 For binary cell samples, the L-layer Coincide operator is
 
-$
+$$
 S_L(x,y;r,c)=
 \prod_{j=0}^{L-1}
 \mathbf{1}_{\mathbb P}\left[
@@ -560,7 +560,7 @@ U\left(
 \left\lfloor y/r^j+\tfrac12\right\rfloor
 \right)+c
 \right],
-$
+$$
 
 where U is the Ulam index with U(0,0)=1 and c is centre number minus one. **Each layer samples directly from the initial coordinate**. Repeatedly applying a rounded map is not generally the same operation.
 
@@ -576,9 +576,9 @@ Independently recomputed with exact prime testing on an **821×821** pixel squar
 
 For centre 41, the signed main diagonal is
 
-$
+$$
 U(s,s)+40=4s^2-2s+41.
-$
+$$
 
 This polynomial is prime at **all 40 consecutive integer positions −19 ≤ s ≤ 20**. It is Euler's classical prime-producing family in the form n²+n+41 with n=−2s. For any coarser scale r≥1 and any number of extra layers, nearest-neighbour sampling moves any integer s within that interval toward zero but keeps it **inside the same interval**. Thus **40 diagonal pixels are rigorously guaranteed to survive arbitrarily many coarser layers**, under the specified base-1 nearest-neighbour sampling.
 
@@ -594,9 +594,9 @@ The visual transition around [17:29–18:14](https://www.youtube.com/watch?v=pyT
 
 The implementation's density rule is approximately
 
-$
+$$
 v=\min\left(1,\frac12\,\frac{\#\text{prime sampled cells}}{\#\text{sampled cells}}\ln n_{\mathrm{last}}\right).
-$
+$$
 
 It uses the **last enumerated index**, not the average of the sampled indices. The greyscale radial burst therefore contains sampling, density-normalization and prime-arithmetic effects simultaneously. To count true multiscale coincident primes, use direct binary samples, not this shaded Coincide output.
 
@@ -606,10 +606,10 @@ At an exact scale ratio of 3, an aligned coarse cell divides into a **3×3** blo
 
 For **light-mode Overlay** the actual composition is multiplicative, channel by channel on white paper:
 
-$
+$$
 \frac{C_{\mathrm{out}}}{255}
 =\prod_j\left[1-v_j\left(1-\frac{C_j}{255}\right)\right].
-$
+$$
 
 It is **not** a linear subtractive sum. One ink layer cannot erase another to punch a white hole through a coloured block. The nested brown, green and cyan shapes are overlaps of prime cells with different sizes and inks, combined with fine-scale parity and density textures.
 
@@ -629,17 +629,17 @@ $r_\infty=\max(|x|,|y|).$
 
 On a circle of radius R, the shell radius varies with angle:
 
-$
+$$
 r_\infty=R\max(|\cos\theta|,|\sin\theta|).
-$
+$$
 
 It ranges from R at the cardinal points to R/√2 at the diagonals. Near a cardinal-axis tangency, the departure of the circular boundary from a straight square-shell edge is approximately y²/(2R). A strip of thickness w can therefore appear as a broad arch with tangential span of order √(2Rw). This predicts keystone-like arcs by **geometry alone**, without invoking physical caustics.
 
 **Narrow Round rings, 20:50–22:00.** The selection mask is
 
-$
+$$
 j(x,y)=\left\lfloor\frac{\sqrt{x^2+y^2}}{B}\right\rfloor\bmod L.
-$
+$$
 
 It interleaves circular bands with several square lattices of prime-cell boundaries. The intersections create visually striking curved moiré, hatching and apparent off-centre bullseyes. These are **not demonstrated Talbot carpets or Fresnel diffraction**: no coherent wave propagation exists in the implementation. Compression in the YouTube upload may alter fine details; evaluate those on the original recording or direct renderer output.
 
@@ -656,6 +656,130 @@ Recording the full parameter tuple (base, ratio, layer count, mask, band width, 
 
 **Takeaway:** the video reveals an exact near-identity XOR locking region, demonstrable multiscale geometry, and striking prime-bearing diagonal survival. The separately calculated Euler example includes a **proved 40-pixel survival interval**; the remaining six-layer structures still require matched controls before claiming any new prime-number theory.
 
+### 25. Exact XOR box genealogy: 2 to 6 layers at ratio 1.010
+
+The five sequential screenshots with **XOR**, **base 1.00 px/cell**, **ratio 1.010**, **centre number 1**, and layer count **2, 3, 4, 5, 6** reveal a stronger result than the 35×35 full-lock square derived in section 19. The visible boxes follow an exact integer-coordinate partition, and the **additional white rectangles at even layer counts come from pairwise cancellation even when *all* the layers do not agree**.
+
+**Reproduce:** Run the no-dependency checker from the repository root:
+
+    python analysis/xor_zones.py
+
+It uses exact integer arithmetic for the fraction **101/100**, prints every offset zone in the central range and independently verifies the universal XOR-cancellation condition on the full 101×101 coordinate grid. No prime sieve is involved.
+
+#### 25.1. The rounded-scale map and its exact one-dimensional jumps
+
+At integer screen coordinate x relative to the shared centre, layer j samples
+
+$$
+T_j(x)=\left\lfloor\frac{x}{(101/100)^j}+\frac12\right\rfloor,
+\qquad j=0,\ldots,L-1.
+$$
+
+Define the **sampling offset** d_j(x)=x−T_j(x). It is the *offset* that is constant inside a zone, **not the sampled integer T_j(x)** (which still changes from one pixel to the next).
+
+For any integer x, with the usual sign convention,
+
+$$
+d_j(x)=\operatorname{sgn}(x)
+\left\lfloor
+|x|\left(1-\left(\frac{100}{101}\right)^j\right)+\frac12
+\right\rfloor.
+$$
+
+There are no half-integer ties for integer x at this rational ratio. Hence the formula is symmetric under x→−x. For x≥0, the coordinate at layer j first loses its (k+1)-th integer at
+
+$$
+b_{j,k}=
+\left\lceil
+\frac{(2k+1)\,101^j}{2(101^j-100^j)}
+\right\rceil,\quad k=0,1,\ldots
+$$
+
+The **exact**, rather than rounded, first two jump positions are:
+
+| Layer j | First offset becomes 1 at x= | Next offset becomes 2 at x= |
+|---:|---:|---:|
+| 1 | **51** | 152 |
+| 2 | **26** | 77 |
+| 3 | **18** | 52 |
+| 4 | **13** | **39** |
+| 5 | **11** | **31** |
+
+These thresholds are what produce the nested strips in the screenshots; the second jumps at 31 and 39 are essential for the six-layer picture.
+
+#### 25.2. Complete 1D offset zones for 2–6 layers, x=0…50
+
+Each tuple below is (d_1,d_2,…,d_{L−1}); the unscaled layer j=0 always has d_0=0. For negative x, reflect the intervals and negate every tuple. A semicolon separates distinct **maximal constant-offset intervals**.
+
+| Layers | Exact positive-x intervals and offset signatures |
+|---:|---|
+| **2** | 0–50: (0) |
+| **3** | 0–25: (0,0); 26–50: (0,1) |
+| **4** | 0–17: (0,0,0); 18–25: (0,0,1); 26–50: (0,1,1) |
+| **5** | 0–12: (0,0,0,0); 13–17: (0,0,0,1); 18–25: (0,0,1,1); 26–38: (0,1,1,1); 39–50: (0,1,1,2) |
+| **6** | 0–10: (0,0,0,0,0); 11–12: (0,0,0,0,1); 13–17: (0,0,0,1,1); 18–25: (0,0,1,1,1); 26–30: (0,1,1,1,1); 31–38: (0,1,1,1,2); 39–50: (0,1,1,2,2) |
+
+The interval where **every layer samples the identical integer** has half-widths **50, 25, 17, 12 and 10** for L=2,3,4,5,6 respectively. That alone explains the central square shrinking, but it does **not** explain all the outer white boxes.
+
+#### 25.3. Why four layers give nine *guaranteed white* rectangles
+
+Consider a generic binary field P(x,y), not necessarily the primes. The XOR renderer computes
+
+$$
+X_L(x,y)=\bigoplus_{j=0}^{L-1}P(T_j(x),T_j(y)).
+$$
+
+At four layers, if the **first pair** samples the same coordinate and the **second pair** also samples the same coordinate, we get
+
+$$
+P(A)\oplus P(A)\oplus P(B)\oplus P(B)=0.
+$$
+
+Crucially, **A and B need not be equal**. This produces exact white regions *outside* the full-lock square.
+
+Define the pair-agreement set for even L:
+
+$$
+A_L=\left\{
+x\in\mathbb{Z}:
+T_0(x)=T_1(x),\
+T_2(x)=T_3(x),\ \ldots,\
+T_{L-2}(x)=T_{L-1}(x)
+\right\}.
+$$
+
+Because horizontal and vertical sampling are independent, **XOR is identically zero for every possible binary field** whenever (x,y) lies in A_L×A_L.
+
+For the present monotone rounded-scale maps, this is also the *complete set of universal-zero pixels*: identical sampled 2D coordinates occur in contiguous layer runs, so an even multiplicity at every coordinate requires adjacent pairs to match. It is not a statement that every pixel outside this set will be dark for the *prime* field; incidental cancellations can happen there too.
+
+The exact **1D pair-agreement bands** are:
+
+| Even layers | All 1D pair-agreement intervals (x, inclusive) | Cartesian white rectangles | Guaranteed-white pixels |
+|---:|---|---:|---:|
+| **2** | [−50, 50] | **1 = 1×1** | **10,201** |
+| **4** | [−50, −26], [−17, 17], [26, 50] | **9 = 3×3** | **7,225** |
+| **6** | [−50, −39], [−30, −26], [−17, −13], [−10, 10], [13, 17], [26, 30], [39, 50] | **49 = 7×7** | **4,225** |
+
+The white shapes need not be equal-sized *squares*: they are rectangles obtained by crossing intervals of different lengths. Their exact positions and areas are predicted **before inspecting a prime**.
+
+#### 25.4. Odd layers reveal the unpaired layer instead of white
+
+With three layers, in the entire 101×101 central region, the first two layers match and cancel:
+
+$$
+P(A)\oplus P(A)\oplus P(B)=P(B).
+$$
+
+Thus **L=3 renders exactly layer 2** throughout that region, rather than a universal blank square. With five layers, the same argument shows that **the nine rectangles in A_4×A_4 render exactly layer 4**: two preceding pairs cancel, leaving only the fifth layer's primality texture. This explains the alternating white/textured character of the 2→3→4→5→6 screenshots.
+
+The resulting sequence is therefore **one guaranteed-white block at L=2, nine at L=4 and 49 at L=6**, with the intervening odd layer counts showing the next unpaired layer within the corresponding agreement bands.
+
+#### 25.5. Testable predictions, scope and limits
+
+The simple central-lock estimate in section 19 predicts the **innermost** white square for even L, whereas the pair-agreement calculation predicts the **entire family of forced-white tiles**. For a hypothetical extension of the HTML past six layers, the same exact-rational calculation predicts **81 guaranteed-white rectangles at L=8**, and **121 at L=10** within the original ±50-coordinate square. The count does **not** follow a universal 1, 9, 49, … exponential law: it depends on the rounded sampling thresholds and may eventually decrease.
+
+The guarantees require binary sampling (all active layers at least 1 px/cell), the stated centre alignment, and the current rounded coordinate rule. The tile geometry is **not unique to primes**: any binary field gives the same forced-white mask, while prime-specific structure determines the texture outside that mask. This makes the XOR box genealogy a clean **operator-only control** for the arithmetic experiments described in sections 20 and 24.
+
 ### Reading the screenshots
 
 - **Round rings (third screenshot).** The coarse layers are 59.5, 205.7 and 512 px per cell, so a single cell is about as wide as a ring band or wider. Those layers show only the first handful of integers. Their lit cells are the small primes 2, 3, 5, 7, 11, …, cut into arcs and triangles by the circular mask.
@@ -665,6 +789,7 @@ Recording the full parameter tuple (base, ratio, layer count, mask, band width, 
 ### Ledger
 
 **Verified exactly**
+- the complete exact-rational 1D offset partition and 1, 9, 49 universally white XOR rectangles at L=2,4,6 (section 25)
 - the near-identity four-layer XOR locking square (section 19) and the 40-point Euler survival interval (section 20)
 - the parity law, and the dead odd slots of the 1 px Checker weave that follow from it
 - the rational-ratio parity lift law in section 11 (for the specified nearest-neighbour sampling, in the full-period limit)
