@@ -148,6 +148,15 @@ footer { color: var(--muted); font-size: 12.5px; max-width: 820px; }
           <button data-s="41">41</button>
         </div>
         <p class="note">Start at 41 and Euler's n² + n + 41 runs as one long unbroken diagonal.</p>
+        <div class="row"><label>Prime centre sweep</label><span class="val" id="primeCentreInfo">2 → 3 → 5 → …</span></div>
+        <div class="btns">
+          <button id="primePrev" type="button" aria-label="Previous prime centre">← Prime</button>
+          <button id="primePlay" type="button" aria-pressed="false">▶ Sweep primes</button>
+          <button id="primeNext" type="button" aria-label="Next prime centre">Prime →</button>
+        </div>
+        <div class="row"><label for="primeSpeed">Time per centre</label><span class="val" id="primeSpeedV">0.80 s</span></div>
+        <input type="range" id="primeSpeed" min="300" max="2000" step="50" value="800">
+        <p class="note">Cycle through prime centres 2, 3, 5, 7, 11… up to 1,000,000, then loop. The 1 preset is retained (1 is not prime).</p>
       </div>
 
       <div class="group">
@@ -168,8 +177,8 @@ footer { color: var(--muted); font-size: 12.5px; max-width: 820px; }
 (() => {
   const $ = id => document.getElementById(id);
   const cv = $('cv'), ctx = cv.getContext('2d'), wrap = $('wrap');
-  const DEF = { count: 3, log2z: 0, ratio: 2, mode: 'rows', band: 4, start: 1 };
-  const S = Object.assign({ ox: 0, oy: 0, muted: new Set(), playing: false }, DEF);
+  const DEF = { count: 3, log2z: 0, ratio: 2, mode: 'rows', band: 4, start: 1, primeDelay: 800 };
+  const S = Object.assign({ ox: 0, oy: 0, muted: new Set(), playing: false, primePlaying: false }, DEF);
   const MODES = [
     ['sub', 'Interlace'],
     ['rows', 'Rows'], ['cols', 'Columns'], ['checker', 'Checker'], ['squares', 'Square rings'], ['rings', 'Round rings'],
@@ -205,6 +214,28 @@ footer { color: var(--muted); font-size: 12.5px; max-width: 820px; }
     sieve = s; sieveN = m;
   }
   const isPrime = n => n >= 2 && n <= sieveN && !sieve[n];
+
+  // Centre sweep uses the same prime sieve as the painted spiral; no external lookup.
+  const MAX_CENTRE = 1000000;
+  let primeCentres = null;
+  function centrePrimeList() {
+    if (primeCentres === null) {
+      ensure(MAX_CENTRE);
+      primeCentres = [];
+      for (let n = 2; n <= MAX_CENTRE; n++) if (!sieve[n]) primeCentres.push(n);
+    }
+    return primeCentres;
+  }
+  // Strictly next/previous prime; wraps at the edges of the centre-number range.
+  function adjacentPrime(n, direction, primes) {
+    const target = n + (direction > 0 ? 1 : 0);
+    let lo = 0, hi = primes.length;
+    while (lo < hi) {
+      const mid = (lo + hi) >>> 1;
+      if (primes[mid] < target) lo = mid + 1; else hi = mid;
+    }
+    return direction > 0 ? primes[lo % primes.length] : primes[(lo - 1 + primes.length) % primes.length];
+  }
 
   // spiral index: 1 at (0,0), 2 at (1,0), 3 at (1,1), counter-clockwise, y up
   function idx(x, y) {
@@ -355,6 +386,12 @@ footer { color: var(--muted); font-size: 12.5px; max-width: 820px; }
     $('band').value = S.band; $('bandV').textContent = S.band + ' px';
     $('band').disabled = !PARTITION.has(S.mode);
     $('start').value = S.start;
+    $('primeSpeed').value = S.primeDelay;
+    $('primeSpeedV').textContent = (S.primeDelay / 1000).toFixed(2) + ' s';
+    $('primeCentreInfo').textContent = S.start === 1 ? '1 · starting point' :
+      (S.start <= sieveN && isPrime(S.start) ? fmt(S.start) + ' · prime' : fmt(S.start) + ' · centre');
+    $('primePlay').setAttribute('aria-pressed', S.primePlaying);
+    $('primePlay').textContent = S.primePlaying ? 'Ⅱ Pause primes' : '▶ Sweep primes';
     document.querySelectorAll('#ratioPresets button').forEach(b => b.setAttribute('aria-pressed', Math.abs(+b.dataset.r - S.ratio) < 0.002));
     document.querySelectorAll('#startPresets button').forEach(b => b.setAttribute('aria-pressed', +b.dataset.s === S.start));
     document.querySelectorAll('#modes button').forEach(b => b.setAttribute('aria-pressed', b.dataset.m === S.mode));
@@ -367,24 +404,71 @@ footer { color: var(--muted); font-size: 12.5px; max-width: 820px; }
   $('zoom').addEventListener('input', e => { S.log2z = +e.target.value; update(); });
   $('ratio').addEventListener('input', e => { S.ratio = +e.target.value; update(); });
   $('band').addEventListener('input', e => { S.band = +e.target.value; update(); });
-  $('start').addEventListener('change', e => { let v = Math.round(+e.target.value); if (!(v >= 1)) v = 1; S.start = Math.min(v, 1000000); update(); });
+  $('start').addEventListener('change', e => { stopPrimeSweep(); let v = Math.round(+e.target.value); if (!(v >= 1)) v = 1; S.start = Math.min(v, MAX_CENTRE); update(); });
   $('ratioPresets').addEventListener('click', e => { const b = e.target.closest('button'); if (b) { S.ratio = +b.dataset.r; update(); } });
-  $('startPresets').addEventListener('click', e => { const b = e.target.closest('button'); if (b) { S.start = +b.dataset.s; update(); } });
+  $('startPresets').addEventListener('click', e => { const b = e.target.closest('button'); if (b) { stopPrimeSweep(); S.start = +b.dataset.s; update(); } });
   $('modes').addEventListener('click', e => { const b = e.target.closest('button'); if (b) { S.mode = b.dataset.m; update(); } });
   $('chips').addEventListener('click', e => { const b = e.target.closest('button'); if (!b) return; const i = +b.dataset.l; S.muted.has(i) ? S.muted.delete(i) : S.muted.add(i); update(); });
-  $('reset').addEventListener('click', () => { Object.assign(S, DEF, { ox: 0, oy: 0 }); S.muted.clear(); S.playing = false; update(); });
+  $('reset').addEventListener('click', () => { stopPrimeSweep(); Object.assign(S, DEF, { ox: 0, oy: 0 }); S.muted.clear(); S.playing = false; zoomGeneration++; update(); });
+
+  // Prime centres: advance only after a timeout, never in a busy animation-frame loop.
+  let primeTimer = null;
+  function stopPrimeSweep() {
+    S.primePlaying = false;
+    if (primeTimer !== null) { clearTimeout(primeTimer); primeTimer = null; }
+  }
+  function advancePrime(direction) {
+    S.start = adjacentPrime(S.start, direction, centrePrimeList());
+    update();
+  }
+  function schedulePrime() {
+    if (!S.primePlaying) return;
+    // Let the previous canvas render finish on slow machines.
+    primeTimer = setTimeout(() => {
+      primeTimer = null;
+      if (!S.primePlaying) return;
+      advancePrime(1);
+      schedulePrime();
+    }, Math.max(S.primeDelay, Math.ceil(lastMs) + 80));
+  }
+  $('primePlay').addEventListener('click', () => {
+    if (S.primePlaying) stopPrimeSweep();
+    else {
+      S.playing = false; // Only one automatic sweep can run at a time.
+      zoomGeneration++;
+      S.primePlaying = true;
+      schedulePrime();
+    }
+    syncUI();
+  });
+  $('primePrev').addEventListener('click', () => { stopPrimeSweep(); advancePrime(-1); });
+  $('primeNext').addEventListener('click', () => { stopPrimeSweep(); advancePrime(1); });
+  $('primeSpeed').addEventListener('input', e => {
+    S.primeDelay = +e.target.value;
+    if (S.primePlaying) { clearTimeout(primeTimer); primeTimer = null; schedulePrime(); }
+    syncUI();
+  });
+  document.addEventListener('visibilitychange', () => {
+    if (document.hidden && S.primePlaying) { stopPrimeSweep(); syncUI(); }
+  });
 
   // zoom sweep
-  let dir = 1;
-  function tick() {
-    if (!S.playing) return;
+  let dir = 1, zoomGeneration = 0;
+  function tick(gen) {
+    if (!S.playing || gen !== zoomGeneration) return;
     S.log2z += dir * 0.008;
     if (S.log2z > 4) { S.log2z = 4; dir = -1; }
     if (S.log2z < -1.5) { S.log2z = -1.5; dir = 1; }
     syncUI(); render();
-    requestAnimationFrame(tick);
+    requestAnimationFrame(() => tick(gen));
   }
-  $('play').addEventListener('click', () => { S.playing = !S.playing; syncUI(); if (S.playing) requestAnimationFrame(tick); });
+  $('play').addEventListener('click', () => {
+    S.playing = !S.playing;
+    zoomGeneration++;
+    if (S.playing) stopPrimeSweep();
+    syncUI();
+    if (S.playing) requestAnimationFrame(() => tick(zoomGeneration));
+  });
 
   // ---------- pointer ----------
   const toCanvas = e => { const r = cv.getBoundingClientRect(), s = cv.width / r.width; return [Math.floor((e.clientX - r.left) * s), Math.floor((e.clientY - r.top) * s), s]; };
