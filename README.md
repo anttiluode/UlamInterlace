@@ -9,7 +9,7 @@ Video: https://www.youtube.com/watch?v=pyTtm_awohQ
 
 Several copies of Ulam's prime spiral, each drawn at a different zoom level, all sharing the same centre, woven together pixel by pixel.
 
-**Live:** https://anttiluode.github.io/ulaminterlace/
+**Try it now:** https://anttiluode.github.io/ulaminterlace/
 
 One self-contained HTML file (`index.html`). No libraries, no build step. Open it in a browser.
 
