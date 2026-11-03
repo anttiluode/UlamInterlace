@@ -76,6 +76,7 @@ The prime number theorem says primes thin out like `1 / ln n`, so multiplying by
 ## Other controls
 
 - **Centre number.** The integer placed at the centre. Start at 41 and Euler's `n² + n + 41` shows up as one long unbroken diagonal of primes (it produces primes for n = 0 to 39).
+- **Prime centre sweep.** In **Spiral**, press **▶ Sweep primes** to walk the centre through 2, 3, 5, 7, 11… automatically. The canvas uses the existing centre-number renderer; all layers and weave controls stay in place. **Ⅱ Pause primes** freezes the current centre, **← Prime / Prime →** step manually, and **Time per centre** controls the interval (0.30–2.00 s, default 0.80 s). The sequence wraps to 2 after the last prime below 1,000,000. The original **1 / 17 / 41** presets are unchanged (1 is not prime). Setting a centre manually stops prime playback; starting the zoom sweep stops prime playback and vice versa. Switching tabs pauses the prime sweep.
 - **Ratio presets.** √2, φ, 2, 3. Rational ratios line the layers' diagonals up periodically; φ and √2 do not, which gives a different moiré.
 - **Layer chips.** Click to mute a layer.
 - **Readout.** Hovering shows, for every layer, the cell position, the integer n there, and whether it is prime. In interlace modes the row for the layer that owns that pixel is highlighted.
